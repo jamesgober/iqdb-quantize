@@ -1,0 +1,101 @@
+# ██████╗ ███████╗██████╗ ███████╗
+# ██╔══██╗██╔════╝██╔══██╗██╔════╝
+# ██████╔╝█████╗  ██████╔╝███████╗
+# ██╔══██╗██╔══╝  ██╔═══╝ ╚════██║
+# ██║  ██║███████╗██║     ███████║
+# ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝
+#╔═══════════════════════════════╗
+#║ Rust Efficiency & Performance ║
+#╚═══════════════════════════════╝
+[package]
+name    = "iqdb-quantize"
+version = "0.1.0"
+
+# Minimum Supported Rust Version (MSRV)
+rust-version = "1.85"
+edition = "2024"
+
+# License
+license = "Apache-2.0 OR MIT"
+
+# Readme
+readme = "README.md"
+
+# Description
+description = "Vector quantization (scalar, product, binary) for memory-efficient vector search - part of the iQDB family."
+
+# Keywords (5 max)
+keywords = [
+    "quantization",
+    "vector-search",
+    "embeddings",
+    "compression",
+    "iqdb"
+]
+
+# Categories
+categories = [
+    "algorithms",
+    "compression"
+]
+
+# Links
+homepage      = "https://github.com/jamesgober/iqdb-quantize"
+repository    = "https://github.com/jamesgober/iqdb-quantize"
+documentation = "https://docs.rs/iqdb-quantize"
+
+# Authors
+authors = [
+    "James Gober <me@jamesgober.com>"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lib]
+name = "iqdb_quantize"
+path = "src/lib.rs"
+
+
+# FEATURE FLAGS
+# #################################
+[features]
+default = ["std"]
+# Standard library.
+std = []
+# Serialization support.
+serde = ["dep:serde"]
+
+
+# DEPENDENCIES
+# #################################
+[dependencies]
+serde = { version = "1", optional = true, default-features = false, features = ["derive", "alloc"] }
+
+
+# DEV DEPENDENCIES
+# #################################
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+proptest = "1"
+
+[target.'cfg(loom)'.dev-dependencies]
+loom = "0.7"
+
+
+# BENCHMARKS
+# #################################
+[[bench]]
+name    = "quantize_bench"
+harness = false
+
+
+# RELEASE PROFILE
+# #################################
+[profile.release]
+opt-level     = 3
+lto           = "fat"
+codegen-units = 1
+panic         = "abort"
+strip         = "symbols"

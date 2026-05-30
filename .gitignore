@@ -1,0 +1,33 @@
+# Development (dev/ is committed; .dev/ and .claude/ stay local)
+/.dev
+/.claude
+
+# Rust/Cargo Build Artifacts
+/target/
+**/*.rs.bk
+
+# Dependencies
+/node_modules/
+/vendor/
+
+# Editor & OS Junk
+/.vscode
+.DS_Store
+.Spotlight-V100
+.Trash-*
+.Trashes
+.directory
+.LSOverride
+.AppleDouble
+Desktop.ini
+ehthumbs.db
+Thumbs.db
+$RECYCLE.BIN/
+
+# Environment & Secrets
+.env
+/config/
+storage/*.key
+
+# Cargo lock (libraries don't commit lock)
+Cargo.lock
