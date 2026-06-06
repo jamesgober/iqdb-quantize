@@ -12,7 +12,7 @@ name    = "iqdb-quantize"
 version = "0.1.0"
 
 # Minimum Supported Rust Version (MSRV)
-rust-version = "1.85"
+rust-version = "1.87"
 edition = "2024"
 
 # License

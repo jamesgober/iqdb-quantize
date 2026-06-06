@@ -27,7 +27,7 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 
 ### Added
 
-- `Cargo.toml` with crate metadata, Rust 2024 edition, MSRV 1.85.
+- `Cargo.toml` with crate metadata, Rust 2024 edition, MSRV 1.87.
 - Dual `Apache-2.0 OR MIT` license files.
 - `README.md`, `CHANGELOG.md`, and a documentation skeleton.
 - `REPS.md` compliance baseline.

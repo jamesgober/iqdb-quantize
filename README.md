@@ -11,7 +11,7 @@
     <a href="https://crates.io/crates/iqdb-quantize"><img alt="Downloads" src="https://img.shields.io/crates/d/iqdb-quantize?color=%230099ff"></a>
     <a href="https://docs.rs/iqdb-quantize"><img alt="docs.rs" src="https://img.shields.io/docsrs/iqdb-quantize"></a>
     <a href="https://github.com/jamesgober/iqdb-quantize/actions"><img alt="CI" src="https://github.com/jamesgober/iqdb-quantize/actions/workflows/ci.yml/badge.svg"></a>
-    <a href="https://github.com/rust-lang/rfcs/blob/master/text/2495-min-rust-version.md"><img alt="MSRV" src="https://img.shields.io/badge/MSRV-1.85%2B-blue"></a>
+    <a href="https://github.com/rust-lang/rfcs/blob/master/text/2495-min-rust-version.md"><img alt="MSRV" src="https://img.shields.io/badge/MSRV-1.87%2B-blue"></a>
 </div>
 
 <br>
@@ -26,7 +26,7 @@
     <br>
     <hr>
     <p>
-        <strong>MSRV is 1.85+</strong> (Rust 2024 edition). Scalar, product, and binary quantization. Quality/space dial.
+        <strong>MSRV is 1.87+</strong> (Rust 2024 edition). Scalar, product, and binary quantization. Quality/space dial.
     </p>
     <blockquote>
         <strong>Status: pre-1.0, in active development.</strong> The public API is being designed across the 0.x series and frozen at <code>1.0.0</code>. See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
