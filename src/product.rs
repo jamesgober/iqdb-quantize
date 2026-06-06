@@ -24,7 +24,7 @@
 //! | [`DistanceMetric::Euclidean`]           | yes       | `L2² = Σ_m L2²(q_m, c_m)`; take `sqrt` once at the end.          |
 //! | [`DistanceMetric::DotProduct`]          | yes       | `dot = Σ_m dot(q_m, c_m)`; raw inner product (matches SQ8).      |
 //! | [`DistanceMetric::Manhattan`]           | yes       | `L1 = Σ_m L1(q_m, c_m)`.                                         |
-//! | [`DistanceMetric::Cosine`]              | **no**    | Requires global `‖c‖`; deferred to v0.4. Returns `InvalidMetric`.|
+//! | [`DistanceMetric::Cosine`]              | **no**    | Requires a global `‖c‖` PQ cannot recover per subvector. Returns `InvalidMetric`.|
 //! | [`DistanceMetric::Hamming`]             | **no**    | Meaningless on `f32` codes. Returns `InvalidMetric`.             |
 //!
 //! Production practice: L2-normalize vectors before training and use

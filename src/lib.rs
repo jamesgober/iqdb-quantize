@@ -87,7 +87,6 @@
 //! [`IqdbError::DimensionMismatch`]: iqdb_types::IqdbError::DimensionMismatch
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
-#![cfg_attr(docsrs, feature(doc_cfg))]
 #![deny(warnings)]
 #![deny(missing_docs)]
 #![deny(unsafe_op_in_unsafe_fn)]
