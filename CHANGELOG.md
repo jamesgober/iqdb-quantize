@@ -25,6 +25,7 @@ Initial public surface for the **iqdb** quantization layer. Three quantization s
 ### Added
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - `Cargo.toml` with crate metadata, Rust 2024 edition, MSRV 1.87.
 - Dual `Apache-2.0 OR MIT` license files.
 - `README.md`, `CHANGELOG.md`, and a documentation skeleton.
@@ -32,6 +33,8 @@ Initial public surface for the **iqdb** quantization layer. Three quantization s
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 =======
+=======
+>>>>>>> a62852ef3ed25f477b97eef1f7cbec854963f422
 - `Quantizer` trait with associated `train`, `quantize`, `dequantize`, and `distance` methods, all returning `iqdb_types::Result`.
 - `ScalarQuantizer` &mdash; scalar quantization (SQ8, 4&times; compression). Per-dimension affine calibration with `u8` codes; the zero-range (`max == min`) case is guarded to avoid division by zero. Asymmetric distance dequantizes the candidate and routes through `iqdb_distance::compute`; supports every `DistanceMetric` variant.
 - `BinaryQuantizer` &mdash; binary quantization (BQ, 32&times; compression). One bit per dimension thresholded against a trained per-dimension mean; codes are packed into `Vec<u64>` words with padding bits zeroed in the trailing word so they cannot contribute to Hamming. Supports `DistanceMetric::Hamming` only; other metrics return `IqdbError::InvalidMetric`.
@@ -51,6 +54,9 @@ Initial public surface for the **iqdb** quantization layer. Three quantization s
 
 - `src/rng.rs` and `src/train.rs` are near-verbatim copies of the SplitMix64 PRNG and k-means used by the broader iqdb spine. The duplication is intentional for v0.1.0 because lifting them into shared utility crates (`iqdb-rand`, `iqdb-cluster`) is tracked separately; the duplication has no consumer-visible effect.
 
+<<<<<<< HEAD
 >>>>>>> 90cf5f804c31c4b137e8d23e9e00b7b4f56f10b2
+=======
+>>>>>>> a62852ef3ed25f477b97eef1f7cbec854963f422
 [Unreleased]: https://github.com/jamesgober/iqdb-quantize/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/jamesgober/iqdb-quantize/releases/tag/v0.1.0
