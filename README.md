@@ -56,9 +56,47 @@ iqdb-quantize = "0.1"
 
 <br>
 
+## Example
+
+```rust
+use iqdb_quantize::{Quantizer, ScalarQuantizer};
+use iqdb_types::DistanceMetric;
+
+let training: Vec<Vec<f32>> = vec![
+    vec![0.10, 0.20, 0.30],
+    vec![0.15, 0.18, 0.32],
+    vec![0.12, 0.22, 0.28],
+];
+let refs: Vec<&[f32]> = training.iter().map(Vec::as_slice).collect();
+
+let mut sq = ScalarQuantizer::new();
+sq.train(&refs).unwrap();
+
+let candidate = [0.11_f32, 0.21, 0.29];
+let code = sq.quantize(&candidate).unwrap();
+
+let query = [0.10_f32, 0.20, 0.30];
+let d = sq.distance(&query, &code, DistanceMetric::Cosine).unwrap();
+assert!(d.is_finite());
+```
+
+Two rules to use quantization correctly: **train on representative data**, and **search quantized but rerank with full `f32`**. Skipping the rerank step is the most common cause of "quantization broke recall" reports.
+
+<br>
+
+## How to use it
+
+Every method of the `Quantizer` trait is fallible and returns `iqdb_types::Result`. The library never panics on bad input.
+
+- **`ScalarQuantizer` (SQ8)** &mdash; per-dimension affine calibration; codes are `u8`. Supports every `DistanceMetric` via asymmetric distance through `iqdb-distance`.
+- **`BinaryQuantizer` (BQ)** &mdash; one bit per dimension, packed into `Vec<u64>`. Supports `DistanceMetric::Hamming` only; other metrics return `IqdbError::InvalidMetric`.
+- **`ProductQuantizer` (PQ)** &mdash; `M`-byte codes via deterministic k-means codebooks (`PqAdcTables` precomputes per-query lookup tables for batch ADC scoring). Supports `Euclidean`, `DotProduct`, `Manhattan`; `Cosine` (no global norm) and `Hamming` (wrong code space) return `IqdbError::InvalidMetric`.
+
+<br>
+
 ## Status
 
-This is the <code>v0.1.0</code> scaffold: structure, tooling, and quality gates are in place; the implementation lands across the 0.x series per the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a> and <a href="./docs/API.md"><code>docs/API.md</code></a>.
+This is the <code>v0.1.0</code> release: SQ8, BQ, and PQ quantization land behind a single `Quantizer` trait, with the `PqAdcTables` batch-ADC primitive, deterministic seeded k-means, property tests for round-trip and distance invariants, recall integration tests, and a criterion bench harness. The public API stabilises across the 0.x series and freezes at <code>1.0.0</code> &mdash; see the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a> and <a href="./docs/API.md"><code>docs/API.md</code></a>.
 
 <hr>
 <br>
