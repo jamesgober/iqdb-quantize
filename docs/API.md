@@ -1,14 +1,12 @@
 # iqdb-quantize &mdash; API Reference
 
 > Complete reference for **every** public item in `iqdb-quantize` as of
-> **v0.5.0**: what it is, its parameters and return shape, the traits it
+> **v1.0.0**: what it is, its parameters and return shape, the traits it
 > implements, and worked examples for each use case.
 >
-> **Status: pre-1.0, public API frozen at 0.5.0.** The surface below is locked
-> for the 1.x series — only additive, non-breaking changes land before the 2.0
-> line. The frozen item list is recorded in `dev/ROADMAP.md`. The 1.0.0 tag adds
-> the stability guarantee and real-consumer integration; it does not change this
-> surface.
+> **Status: stable (1.0).** The public API is committed under SemVer for the 1.x
+> series — no breaking changes until 2.0. The frozen surface is recorded in
+> `dev/ROADMAP.md`; only additive, non-breaking changes are made within 1.x.
 
 ## Table of Contents
 

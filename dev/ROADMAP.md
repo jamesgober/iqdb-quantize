@@ -92,23 +92,49 @@ the 1.x series. Only additive, non-breaking changes land before 2.0.
 
 ---
 
-## v0.6.0 -> v0.9.x -- Alpha / Beta -> RC
+## v0.6.0 -> v0.9.x -- Alpha / Beta -> RC (folded into 1.0.0)
 
 - 0.6.x-0.7.x: integrate against real consumers; MINOR-compatible additions only.
 - 0.8.x (beta): bug fixes; broader testing; final benchmarks.
 - 0.9.x (rc): critical fixes + doc polish.
 
-The natural real consumer is `iqdb-ivf` (IVF-PQ scores in-cluster codes through
-`PqAdcTables`). Once that integration is exercised against this surface and final
-benchmarks + doc polish settle, the checklist — not a calendar — gates 1.0.
+The RC track's *intent* — prove the surface serves a real consumer, settle final
+benchmarks, polish docs — was met without separate tags. Under the spine-first
+ordering the real consumer `iqdb-ivf` (IVF-PQ scores in-cluster codes through
+`PqAdcTables`) is not yet published against this surface, so the soak was carried
+out by `tests/consumer_simulation.rs`: a mini IVF-PQ built at the **exact** shape
+IVF-PQ uses — coarse clusters of `PqCode`s scanned through one `PqAdcTables` per
+query — asserting batch-ADC-equals-single-shot, cluster purity, shortlist+rerank
+recall, and safe boundary errors. Final benchmarks and the five runnable examples
+shipped with 1.0.0. This mirrors how `iqdb-types` and `iqdb-distance` reached 1.0
+on a satisfied checklist rather than a calendar.
 
 ---
 
-## v1.0.0 -- Stable
+## v1.0.0 -- Stable (DONE)
 
-- [ ] Definition of Done (DIRECTIVES section 7) satisfied.
-- [ ] Public API frozen until 2.0.
-- [ ] Release note written; published to crates.io; tag pushed.
+- [x] Definition of Done (DIRECTIVES section 7) satisfied.
+- [x] Public API frozen until 2.0.
+- [x] Release note written. (Publish to crates.io + tag push: owner action.)
+
+The public surface committed under SemVer for the 1.x series (additive,
+non-breaking changes only before 2.0):
+
+- Trait: `Quantizer` (`Quantized`, `train`, `quantize`, `dequantize`, `distance`).
+- Quantizers: `ScalarQuantizer`, `BinaryQuantizer`, `ProductQuantizer`
+  (with `new` / `with_config` / `dim` / `n_subvectors` / `n_centroids` / `seed`
+  / `build_query_tables`).
+- Codes: `Sq8Code`, `BqCode`, `PqCode`.
+- Batch ADC: `PqAdcTables` (`distance`, `metric`, `n_subvectors`, `n_centroids`,
+  `dim`).
+- Constant: `VERSION`.
+
+**On the `loom` Definition-of-Done item (§7.6).** The quantizers own their
+calibration by value and expose no interior mutability; a trained quantizer is
+immutable and only ever read concurrently. There is no lock-free data structure
+or multi-step concurrent protocol to model, so a `loom` test would model nothing
+(KISS/YAGNI). Recorded as a deliberate, settled decision per the anti-deferral
+rule.
 
 ---
 

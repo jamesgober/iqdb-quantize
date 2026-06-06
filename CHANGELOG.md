@@ -18,6 +18,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.0] - 2026-06-06
+
+First stable release. The public API frozen at 0.5.0 is now committed under
+SemVer for the 1.x series: no breaking changes until 2.0. Every
+Definition-of-Done criterion (`dev/DIRECTIVES.md` §7) is satisfied, and the
+surface is verified on Windows and Linux across the stable and 1.87 MSRV
+toolchains. Nothing in the public surface changed since 0.5.0; this release adds
+the consumer-simulation soak, runnable examples, and the stability commitment.
+
+### Added
+
+- Consumer-simulation suite (`tests/consumer_simulation.rs`): a mini IVF-PQ
+  index built **only** on the public surface, reproducing the real consumer's
+  pipeline — partition a corpus into coarse clusters, store each member as a
+  `PqCode`, build the ADC tables once per query with `build_query_tables`, then
+  scan the probed clusters through `PqAdcTables::distance`. It asserts batch ADC
+  equals the single-shot `distance` bit-for-bit for every code and metric, that
+  the PQ index recovers the correct cluster (purity &ge; 0.9) and that a
+  PQ-shortlist + `f32`-rerank recovers the exact top-10 (overlap &ge; 0.9), that
+  an SQ8 flat index preserves the exact top-10 (overlap &ge; 0.9), and that
+  foreign code shapes and unsupported metrics are rejected, not panicked.
+- `examples/`: five runnable, documented examples — `scalar_quantization`,
+  `product_quantization` (with batch ADC), `binary_quantization`, `rerank` (the
+  search-quantized-then-rerank quality path), and `compression` (the three
+  schemes' code sizes side by side).
+
+### Changed
+
+- Declared **1.0 stable**: the frozen surface (recorded in `dev/ROADMAP.md`) is
+  now under the SemVer 1.x compatibility guarantee. The **public API is unchanged
+  from 0.5.0** — this release adds the consumer-simulation, examples, and the
+  stability commitment. Compression is exact and deterministic: SQ8 4&times;, BQ
+  32&times;, and PQ up to ~192&times; (`M = 16` on a 768-dim vector). Per-vector
+  throughput benchmarked on Windows x86_64 at 768 dims (criterion medians): SQ8
+  quantize ~1.56 µs, SQ8 asymmetric Cosine distance ~0.95 µs, BQ quantize
+  ~0.64 µs, BQ Hamming ~0.68 µs.
+
+---
+
 ## [0.5.0] - 2026-06-05
 
 Training-stability, recall validation, and **API freeze**. The three schemes
@@ -184,5 +223,6 @@ layer is built on.
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-quantize/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/jamesgober/iqdb-quantize/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jamesgober/iqdb-quantize/compare/v0.5.0...v1.0.0
 [0.5.0]: https://github.com/jamesgober/iqdb-quantize/releases/tag/v0.5.0
