@@ -12,7 +12,7 @@ name    = "iqdb-quantize"
 version = "0.1.0"
 
 # Minimum Supported Rust Version (MSRV)
-rust-version = "1.85"
+rust-version = "1.87"
 edition = "2024"
 
 # License
@@ -46,7 +46,8 @@ documentation = "https://docs.rs/iqdb-quantize"
 
 # Authors
 authors = [
-    "James Gober <me@jamesgober.com>"
+    "James Gober <me@jamesgober.com>",
+    "Matt Callahan <matthewcallahan01@icloud.com>",
 ]
 
 [package.metadata.docs.rs]
@@ -61,33 +62,43 @@ path = "src/lib.rs"
 # FEATURE FLAGS
 # #################################
 [features]
-default = ["std"]
-# Standard library.
-std = []
-# Serialization support.
-serde = ["dep:serde"]
+# Default build is scalar-only and has no optional dependencies. The crate
+# delegates every f32 distance call to `iqdb-distance`, so SIMD acceleration
+# (AVX2 / NEON) lands transparently through that dependency.
+default = []
 
 
 # DEPENDENCIES
 # #################################
 [dependencies]
-serde = { version = "1", optional = true, default-features = false, features = ["derive", "alloc"] }
+# Shared public vocabulary: DistanceMetric, IqdbError, Result.
+iqdb-types    = "1.0.0"
+# Distance/similarity math. SQ8 asymmetric distance dequantizes the candidate
+# to a temporary `Vec<f32>` and routes through `iqdb_distance::compute`.
+iqdb-distance = "1.0.0"
+# Tracing facade only. Instrumented at the training boundary; per-vector
+# encode/decode/distance stays hot-path-only.
+tracing       = { version = "0.1", default-features = false, features = ["attributes", "std"] }
+# ForgeError trait — gives us `kind()` and `caption()` on IqdbError for
+# structured error-event fields.
+error-forge   = "1.0.0"
 
 
 # DEV DEPENDENCIES
 # #################################
 [dev-dependencies]
+# Per-scheme throughput micro-benches.
 criterion = { version = "0.5", features = ["html_reports"] }
-proptest = "1"
-
-[target.'cfg(loom)'.dev-dependencies]
-loom = "0.7"
+# Property tests for round-trip bounds, error variants, and Hamming popcount.
+proptest  = "1"
+# Recording subscriber used by `tests/tracing.rs` (inlined helper).
+tracing-subscriber = { version = "0.3", default-features = false, features = ["registry"] }
 
 
 # BENCHMARKS
 # #################################
 [[bench]]
-name    = "quantize_bench"
+name    = "quantize"
 harness = false
 
 
