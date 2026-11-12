@@ -17,7 +17,7 @@
 //!   that comes from the same cluster as the query.
 //!
 //! Thresholds are taken from the **measured** values on this corpus with
-//! documented margin. See `.dev/ROADMAP.md` for the calibration policy.
+//! documented margin.
 
 #![allow(clippy::unwrap_used)]
 
