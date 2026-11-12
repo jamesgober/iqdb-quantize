@@ -14,8 +14,7 @@
 //! of which sit above `iqdb-quantize` in the dependency graph and would
 //! cycle. A consolidation PR that lifts `SplitMix64` into a shared
 //! utility crate (e.g. `iqdb-rand`) is tracked alongside the parallel
-//! k-means consolidation in [`crate::train`]; see the workspace
-//! `.dev/ROADMAP.md`.
+//! k-means consolidation in [`crate::train`].
 //!
 //! The generator is not cryptographically secure and is not intended to
 //! be. It is fast, has good enough distribution for the small floating
