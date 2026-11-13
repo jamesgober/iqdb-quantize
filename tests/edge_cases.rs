@@ -307,3 +307,61 @@ fn pq_n_subvectors_equals_dim_ok() {
     let decoded = pq.dequantize(&code).unwrap();
     assert_eq!(decoded.len(), 8);
 }
+
+#[test]
+fn pq_code_from_a_larger_codebook_is_an_error_not_a_panic() {
+    let dim = 4;
+    let train: Vec<Vec<f32>> = (0..300)
+        .map(|i| {
+            (0..dim)
+                .map(|j| ((i * 7 + j * 13) % 97) as f32 / 97.0)
+                .collect()
+        })
+        .collect();
+    let refs: Vec<&[f32]> = train.iter().map(|v| v.as_slice()).collect();
+    let mut big = ProductQuantizer::with_config(2, 256, 1);
+    big.train(&refs).unwrap();
+    let mut small = ProductQuantizer::with_config(2, 4, 1);
+    small.train(&refs).unwrap();
+
+    // Same dim and subvector count, but a code byte past the small codebook.
+    let code = train
+        .iter()
+        .map(|v| big.quantize(v).unwrap())
+        .find(|c| c.as_bytes().iter().any(|&b| b >= 4))
+        .unwrap();
+    let tables = small
+        .build_query_tables(&train[0], DistanceMetric::Euclidean)
+        .unwrap();
+    assert!(matches!(
+        tables.distance(&code),
+        Err(IqdbError::InvalidConfig { .. })
+    ));
+    assert!(matches!(
+        small.dequantize(&code),
+        Err(IqdbError::InvalidConfig { .. })
+    ));
+    // The matching quantizer still scores its own codes.
+    let own = small.quantize(&train[5]).unwrap();
+    assert!(tables.distance(&own).unwrap().is_finite());
+}
+
+#[test]
+fn sq8_range_wider_than_f32_max_decodes_finite_values() {
+    let mut sq = ScalarQuantizer::new();
+    sq.train(&[&[-3.0e38f32][..], &[3.0e38f32][..]]).unwrap();
+    for x in [-3.0e38f32, 0.0, 3.0e38] {
+        let code = sq.quantize(&[x]).unwrap();
+        let back = sq.dequantize(&code).unwrap();
+        assert!(back[0].is_finite(), "{x} decoded to {}", back[0]);
+        assert!(
+            (back[0] - x).abs() <= 1.2e36 + x.abs() * 1e-6,
+            "{x} -> {}",
+            back[0]
+        );
+        let d = sq.distance(&[x], &code, DistanceMetric::Euclidean).unwrap();
+        // The squared error can still overflow the f32 distance kernel, but
+        // it must never come back as NaN.
+        assert!(!d.is_nan(), "distance {d}");
+    }
+}

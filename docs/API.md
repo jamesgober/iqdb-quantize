@@ -199,7 +199,9 @@ quantization is lossy.
 - **`quantized`** — a code produced by this scheme.
 - **Returns** `Ok(Vec<f32>)` of the trained dimension, or [`InvalidConfig`](#errors)
   if untrained / [`DimensionMismatch`](#errors) if the code was produced under a
-  different trained dimension.
+  different trained dimension. For PQ, a code holding a centroid index past this
+  quantizer's codebook (one produced by a quantizer with a larger `K`) returns
+  [`InvalidConfig`](#errors).
 
 ```rust
 use iqdb_quantize::{Quantizer, ScalarQuantizer};
@@ -545,7 +547,8 @@ byte-for-byte identical to the batch path.
 
 - **`distance(code)`** — score one code against the prepared tables. Returns
   [`DimensionMismatch`](#errors) if `code` came from a quantizer with a different
-  `M` or trained `dim`.
+  `M` or trained `dim`, and [`InvalidConfig`](#errors) if it holds a centroid
+  index past this quantizer's codebook (a quantizer with a larger `K`).
 - **`metric()` / `n_subvectors()` / `n_centroids()` / `dim()`** — the metric and
   geometry the tables were built for.
 

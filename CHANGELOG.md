@@ -8,13 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Added
-
-### Changed
+Planned as 1.0.1. No API changes.
 
 ### Fixed
 
-### Security
+- A `PqCode` scored or decoded by a quantizer with a smaller codebook than
+  the one that produced it panicked on an out-of-bounds index. Code bytes
+  are now checked against the codebook, and a foreign code returns
+  `InvalidConfig` from `PqAdcTables::distance` and `dequantize`.
+- SQ8 trained on a finite range wider than `f32::MAX` (for example
+  `-3e38..3e38`) overflowed its step size and decoded NaN. The step size and,
+  where needed, the decoded value are now worked out in `f64`, so every code
+  decodes to a finite value inside the trained range. Ordinary ranges are
+  unchanged.
 
 ---
 

@@ -133,7 +133,7 @@ The full per-item reference, including the metric-support matrix and the error v
 
 ## Status
 
-<code>v1.0.0</code> &mdash; **stable.** SQ8, PQ, and BQ all ship behind a single `Quantizer` trait, with the `PqAdcTables` batch-ADC primitive, deterministic seeded k-means, property tests for round-trip and distance invariants, recall integration tests against full-`f32` baselines, a consumer-simulation soak that builds a mini IVF-PQ on the public surface, `tracing` instrumentation, a criterion bench harness, and five runnable examples. The public API is committed under SemVer for the 1.x series (no breaking changes until 2.0; the frozen surface is recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>), has zero `unsafe`, and is verified on Windows and Linux across stable and the 1.87 MSRV. The full surface is documented in <a href="./docs/API.md"><code>docs/API.md</code></a>.
+<code>v1.0.1</code> &mdash; **stable.** SQ8, PQ, and BQ all ship behind a single `Quantizer` trait, with the `PqAdcTables` batch-ADC primitive, deterministic seeded k-means, property tests for round-trip and distance invariants, recall integration tests against full-`f32` baselines, a consumer-simulation soak that builds a mini IVF-PQ on the public surface, `tracing` instrumentation, a criterion bench harness, and five runnable examples. The public API is committed under SemVer for the 1.x series (no breaking changes until 2.0; the frozen surface is recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>), has zero `unsafe`, and is verified on Windows and Linux across stable and the 1.87 MSRV. The full surface is documented in <a href="./docs/API.md"><code>docs/API.md</code></a>.
 
 <hr>
 <br>

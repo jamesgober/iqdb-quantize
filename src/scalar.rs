@@ -134,6 +134,13 @@ impl Quantizer for ScalarQuantizer {
         let mut scales = vec![0.0_f32; dim];
         for i in 0..dim {
             let range = maxs[i] - mins[i];
+            if !range.is_finite() {
+                // Both ends are finite but their difference passed
+                // `f32::MAX`. The step size still fits, so work it out
+                // in f64.
+                scales[i] = ((f64::from(maxs[i]) - f64::from(mins[i])) / f64::from(LEVELS)) as f32;
+                continue;
+            }
             scales[i] = if range > 0.0 { range / LEVELS } else { 0.0 };
         }
         self.calibration = Some(Sq8Calibration { mins, scales });
@@ -201,7 +208,14 @@ fn decode_scalar(byte: u8, min: f32, scale: f32) -> f32 {
     if scale <= 0.0 {
         return min;
     }
-    min + f32::from(byte) * scale
+    let value = min + f32::from(byte) * scale;
+    if value.is_finite() {
+        value
+    } else {
+        // `byte * scale` overflowed on a range wider than `f32::MAX`; the
+        // decoded value itself is inside the trained range, so it fits.
+        (f64::from(min) + f64::from(byte) * f64::from(scale)) as f32
+    }
 }
 
 #[cfg(test)]
