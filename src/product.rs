@@ -362,7 +362,13 @@ impl Quantizer for ProductQuantizer {
         }
         let mut out: Vec<f32> = Vec::with_capacity(cal.dim);
         for (m, &code) in quantized.codes.iter().enumerate() {
-            let centroid = &cal.codebooks[m][code as usize];
+            // A code from a quantizer with a larger codebook can carry a
+            // byte past this one's centroids.
+            let centroid = cal.codebooks[m]
+                .get(code as usize)
+                .ok_or(IqdbError::InvalidConfig {
+                    reason: FOREIGN_CODE,
+                })?;
             out.extend_from_slice(centroid);
         }
         Ok(out)
@@ -504,7 +510,11 @@ impl PqAdcTables {
                 found: code.dim,
             });
         }
-        let total = score_code_rows(&self.table, code, self.n_centroids);
+        let total = score_code_rows(&self.table, code, self.n_centroids).ok_or(
+            IqdbError::InvalidConfig {
+                reason: FOREIGN_CODE,
+            },
+        )?;
         Ok(if self.metric == DistanceMetric::Euclidean {
             total.sqrt()
         } else {
@@ -583,11 +593,22 @@ fn build_adc_table_rows(
     Ok(table)
 }
 
-fn score_code_rows(table: &[f32], code: &PqCode, n_centroids: usize) -> f32 {
+/// Sum the table rows a code selects, or `None` when a code byte points
+/// past the `n_centroids` entries of its row (a code from a quantizer with
+/// a larger codebook). Without the check such a byte would read the next
+/// row, or past the table.
+fn score_code_rows(table: &[f32], code: &PqCode, n_centroids: usize) -> Option<f32> {
     let mut sum: f32 = 0.0;
     for (m, &c) in code.codes.iter().enumerate() {
-        let row_start = m * n_centroids;
-        sum += table[row_start + c as usize];
+        let c = c as usize;
+        if c >= n_centroids {
+            return None;
+        }
+        sum += *table.get(m * n_centroids + c)?;
     }
-    sum
+    Some(sum)
 }
+
+/// Error reason for a [`PqCode`] scored or decoded by a quantizer other
+/// than the one that produced it.
+const FOREIGN_CODE: &str = "PqCode holds a centroid index past this quantizer's codebook; it was produced by a different quantizer";
